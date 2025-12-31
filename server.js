@@ -20,13 +20,14 @@ app.use('/uploads', express.static(uploadDir));
 // Configure multer for file upload
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const folderPath = req.body.folderPath || '';
+    // Use the current path from the request body
+    const folderPath = req.body.currentPath || '';
     const fullPath = path.join(uploadDir, folderPath);
     fs.ensureDirSync(fullPath);
     cb(null, fullPath);
   },
   filename: function (req, file, cb) {
-    const folderPath = req.body.folderPath || '';
+    const folderPath = req.body.currentPath || '';
     const fullPath = path.join(uploadDir, folderPath);
     
     // Handle duplicate filenames
@@ -44,7 +45,10 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 100 * 1024 * 1024 } // 100MB limit per file
+});
 
 // Routes
 app.get('/api/files', (req, res) => {
@@ -84,14 +88,71 @@ app.get('/api/files', (req, res) => {
   }
 });
 
-app.post('/api/upload', upload.single('file'), (req, res) => {
+// Upload single or multiple files
+app.post('/api/upload', upload.array('files'), (req, res) => {
+  console.log('Uploaded files:', req.files);
+  console.log('Current path:', req.body.currentPath);
+  
   res.json({ 
     success: true, 
-    message: 'File uploaded successfully',
-    file: req.file 
+    message: 'Files uploaded successfully',
+    files: req.files,
+    count: req.files.length
   });
 });
 
+// Upload folder with its structure
+app.post('/api/upload-folder', async (req, res) => {
+  try {
+    const { folderData, currentPath } = req.body;
+    
+    if (!folderData || !folderData.name) {
+      return res.json({ success: false, message: 'Invalid folder data' });
+    }
+    
+    const targetPath = path.join(uploadDir, currentPath || '', folderData.name);
+    
+    // Create the main folder
+    fs.ensureDirSync(targetPath);
+    
+    // Process folder contents recursively
+    await processFolderContents(folderData, targetPath);
+    
+    res.json({ 
+      success: true, 
+      message: 'Folder uploaded successfully',
+      path: targetPath
+    });
+  } catch (error) {
+    console.error('Error uploading folder:', error);
+    res.json({ success: false, message: error.message });
+  }
+});
+
+async function processFolderContents(folderData, targetPath) {
+  // Process files in the folder
+  if (folderData.files && folderData.files.length > 0) {
+    for (const file of folderData.files) {
+      if (file.content) {
+        // For demo: base64 encoded files
+        const filePath = path.join(targetPath, file.name);
+        const buffer = Buffer.from(file.content, 'base64');
+        await fs.writeFile(filePath, buffer);
+      }
+    }
+  }
+  
+  // Process subfolders recursively
+  if (folderData.folders && folderData.folders.length > 0) {
+    for (const subfolder of folderData.folders) {
+      const subfolderPath = path.join(targetPath, subfolder.name);
+      fs.ensureDirSync(subfolderPath);
+      await processFolderContents(subfolder, subfolderPath);
+    }
+  }
+}
+
+// Create folder
 app.post('/api/folder', (req, res) => {
   try {
     const { folderName, currentPath } = req.body;
@@ -109,6 +170,7 @@ app.post('/api/folder', (req, res) => {
   }
 });
 
+// Delete file or folder
 app.delete('/api/delete', (req, res) => {
   try {
     const { filePath } = req.body;
@@ -133,6 +195,7 @@ app.delete('/api/delete', (req, res) => {
   }
 });
 
+// Download file
 app.get('/api/download', (req, res) => {
   try {
     const filePath = req.query.path;
@@ -143,7 +206,7 @@ app.get('/api/download', (req, res) => {
     }
     
     if (fs.statSync(fullPath).isDirectory()) {
-      return res.status(400).send('Cannot download folder');
+      return res.status(400).send('Cannot download folder directly');
     }
     
     res.download(fullPath);
@@ -153,27 +216,37 @@ app.get('/api/download', (req, res) => {
   }
 });
 
+// Download folder as zip
+app.get('/api/download-folder', async (req, res) => {
+  try {
+    const folderPath = req.query.path;
+    const fullPath = path.join(uploadDir, folderPath);
+    
+    if (!fs.existsSync(fullPath) || !fs.statSync(fullPath).isDirectory()) {
+      return res.status(404).send('Folder not found');
+    }
+    
+    // For now, we'll just redirect to a message
+    // In a real implementation, you'd use archiver or similar
+    res.json({ 
+      success: true, 
+      message: 'Folder download requires additional setup',
+      path: folderPath 
+    });
+  } catch (error) {
+    console.error('Error preparing folder download:', error);
+    res.status(500).send('Error preparing folder download');
+  }
+});
+
 // Health check endpoint for Railway
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date(),
-    uploadDir: uploadDir,
-    diskUsage: getDiskUsage()
+    uploadDir: uploadDir
   });
 });
-
-function getDiskUsage() {
-  try {
-    const stats = fs.statSync(uploadDir);
-    return {
-      path: uploadDir,
-      exists: true
-    };
-  } catch (error) {
-    return { error: error.message };
-  }
-}
 
 // Serve frontend
 app.get('*', (req, res) => {
@@ -183,11 +256,7 @@ app.get('*', (req, res) => {
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
   console.log('='.repeat(60));
-  console.log(`🚀 File Storage App is running!`);
-  console.log(`📍 Port: ${PORT}`);
-  console.log(`📁 Upload directory: ${uploadDir}`);
-  console.log(`🌐 Access the app at: http://localhost:${PORT}`);
-  console.log('='.repeat(60));
-  console.log('Health check: GET /health');
-  console.log('Press Ctrl+C to stop');
+  console.log(` File Storage App is running!`);
+  console.log(`Port: ${PORT}`);
+  console.log(`Upload directory: ${uploadDir}`);
 });
