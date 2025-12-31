@@ -1,0 +1,341 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2a 100%);
+    color: #e0d6ff;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(90, 0, 180, 0.2);
+    border-radius: 15px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(150, 50, 255, 0.3);
+    box-shadow: 0 8px 32px rgba(100, 0, 255, 0.1);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo i {
+    font-size: 2.5rem;
+    color: #9d4edd;
+}
+
+.logo h1 {
+    font-size: 2rem;
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.storage-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.storage-bar {
+    width: 200px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.storage-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #7b2cbf, #c77dff);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+/* Main Content */
+.main-content {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+}
+
+/* Sidebar */
+.sidebar {
+    background: rgba(25, 0, 51, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(150, 50, 255, 0.2);
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #9d4edd, #c77dff);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(157, 78, 221, 0.4);
+}
+
+.btn-secondary {
+    background: rgba(157, 78, 221, 0.2);
+    color: #c77dff;
+    border: 1px solid rgba(157, 78, 221, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(157, 78, 221, 0.3);
+    border-color: rgba(157, 78, 221, 0.5);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #c1121f, #e63946);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #e63946, #f77f00);
+}
+
+.btn-small {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+}
+
+.navigation {
+    margin-top: 20px;
+}
+
+.path-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.path-item {
+    color: #c77dff;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.path-item:hover {
+    background: rgba(157, 78, 221, 0.2);
+}
+
+.path-separator {
+    color: #7b2cbf;
+}
+
+/* Content */
+.content {
+    background: rgba(15, 0, 31, 0.6);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid rgba(150, 50, 255, 0.2);
+}
+
+.toolbar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* Files Container */
+.files-container {
+    background: rgba(10, 0, 20, 0.8);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(150, 50, 255, 0.2);
+}
+
+.files-header {
+    display: grid;
+    grid-template-columns: 50px 3fr 1fr 1fr 100px;
+    padding: 15px 20px;
+    background: rgba(90, 0, 180, 0.3);
+    font-weight: 600;
+    border-bottom: 1px solid rgba(150, 50, 255, 0.3);
+}
+
+.files-list {
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: grid;
+    grid-template-columns: 50px 3fr 1fr 1fr 100px;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(150, 50, 255, 0.1);
+    align-items: center;
+    transition: background 0.3s ease;
+}
+
+.file-item:hover {
+    background: rgba(157, 78, 221, 0.1);
+}
+
+.file-item.selected {
+    background: rgba(157, 78, 221, 0.2);
+}
+
+.file-checkbox input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.file-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.file-icon {
+    color: #9d4edd;
+    font-size: 1.2rem;
+}
+
+.file-size, .file-date {
+    color: #b19cd9;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #c77dff;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    padding: 5px;
+}
+
+.action-btn:hover {
+    color: #e0aaff;
+}
+
+.folder-item {
+    cursor: pointer;
+}
+
+.folder-item:hover .file-name {
+    color: #e0aaff;
+}
+
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #9d4edd;
+    font-size: 1.2rem;
+}
+
+/* Upload Progress */
+.upload-progress {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(15, 0, 31, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(150, 50, 255, 0.5);
+    box-shadow: 0 5px 25px rgba(100, 0, 255, 0.3);
+    width: 300px;
+    z-index: 1000;
+}
+
+.upload-progress h3 {
+    margin-bottom: 15px;
+    color: #c77dff;
+}
+
+.progress-container {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #7b2cbf, #c77dff);
+    border-radius: 5px;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    text-align: center;
+    color: #e0d6ff;
+    font-weight: 600;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(25, 0, 51, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #9d4edd, #c77dff);
+}

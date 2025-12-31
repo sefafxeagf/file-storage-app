@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purple Cloud Storage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h1>Purple Cloud</h1>
+            </div>
+            <div class="storage-info">
+                <div class="storage-bar">
+                    <div class="storage-fill" id="storageFill"></div>
+                </div>
+                <span id="storageText">Calculating...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="sidebar">
+                <div class="upload-section">
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-upload"></i> Upload File
+                    </button>
+                    <input type="file" id="fileInput" multiple style="display: none;" onchange="uploadFiles()">
+                    
+                    <button class="btn btn-secondary" onclick="createFolder()">
+                        <i class="fas fa-folder-plus"></i> New Folder
+                    </button>
+                </div>
+                
+                <div class="navigation">
+                    <div class="path-navigation" id="pathNavigation">
+                        <!-- Breadcrumb will be generated here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="toolbar">
+                    <button class="btn btn-small" onclick="refreshFiles()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="deleteSelected()" id="deleteBtn" disabled>
+                        <i class="fas fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+
+                <div class="files-container">
+                    <div class="files-header">
+                        <div class="file-checkbox">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                        </div>
+                        <div class="file-name">Name</div>
+                        <div class="file-size">Size</div>
+                        <div class="file-date">Created</div>
+                        <div class="file-actions">Actions</div>
+                    </div>
+                    
+                    <div class="files-list" id="filesList">
+                        <!-- Files will be loaded here -->
+                        <div class="loading">Loading files...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="upload-progress" id="uploadProgress" style="display: none;">
+            <h3>Uploading Files</h3>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
